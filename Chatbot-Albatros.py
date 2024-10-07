@@ -26,7 +26,7 @@ def extract_text_from_pdf(pdf_file):
     return text
 
 def chatbot_response(message, history, pdf_text=None, image_path=None):
-    messages = [{"role": "system", "content": "Vous êtes un assistant IA utile et amical, capable d'analyser des images et du texte."}]
+    messages = [{"role": "system", "content": "Vous êtes un assistant IA spécialisé en Ressources Humaines. Vous aidez à analyser les compétences, les CV, à proposer des offres d'emploi, des formations et des projets pour améliorer les compétences."}]
     
     if pdf_text:
         messages.append({"role": "system", "content": f"Le contenu du PDF est : {pdf_text}"})
