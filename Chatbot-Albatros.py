@@ -122,9 +122,11 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
     # Efface la conversation
     clear.click(clear_chat, None, [chatbot, pdf_text, image_upload], queue=False)
 
-demo.launch()
+demo.launch(server_name="0.0.0.0", server_port=int(os.environ.get("PORT", 5000)))
 
 # Lancer l'application Flask pour la gestion des API
+import os
+
 if __name__ == "__main__":
-    demo.launch()
-    app.run(host="0.0.0.0", port=7861)
+    port = int(os.environ.get("PORT", 5000))  # Utilise le port fourni par Heroku
+    app.run(host="0.0.0.0", port=port)        # Assure-toi que Flask/Gradio écoute sur 0.0.0.0
