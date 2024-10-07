@@ -5,6 +5,7 @@ import fitz
 import logging
 import base64
 from flask import Flask, request, jsonify
+import io
 import os
 
 # Configuration du logger
@@ -70,20 +71,22 @@ def chatbot_response(message, history, pdf_text=None, image_path=None):
         return f"Erreur: {str(e)}"
 
 @app.route('/api/chatbot', methods=['POST'])
+@app.route('/api/chatbot', methods=['POST'])
 def api_chatbot():
     try:
-        message = request.form.get('message')
-        pdf_file = request.files.get('pdf')
-        pdf_text = extract_text_from_pdf(pdf_file) if pdf_file else None
-        history = request.json.get('history', [])
+        message = request.json.get('message')
+        pdf_base64 = request.json.get('pdf_content')  # Le PDF encodé en base64
         
-        # Appel du chatbot pour obtenir la réponse
-        response = chatbot_response(message, history, pdf_text)
+        # Décoder le PDF base64
+        pdf_data = base64.b64decode(pdf_base64)
+        pdf_file = io.BytesIO(pdf_data)  # Convertir en un fichier exploitable par PyMuPDF
+        pdf_text = extract_text_from_pdf(pdf_file)  # Extraire le texte du PDF
+
+        # Récupérer la réponse du chatbot
+        response = chatbot_response(message, history=[], pdf_text=pdf_text)
         
         return jsonify({'response': response})
-    
     except Exception as e:
-        logger.error(f"Erreur dans l'API: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 # Créer l'interface Gradio pour une utilisation normale
