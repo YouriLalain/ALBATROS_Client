@@ -70,19 +70,16 @@ def chatbot_response(message, history, pdf_text=None, image_path=None):
         logger.error(f"Erreur lors de l'appel API: {str(e)}")
         return f"Erreur: {str(e)}"
 
+
 @app.route('/api/chatbot', methods=['POST'])
 @app.route('/api/chatbot', methods=['POST'])
 def api_chatbot():
     try:
+        # Récupérer le message et le texte du PDF
         message = request.json.get('message')
-        pdf_base64 = request.json.get('pdf_content')  # Le PDF encodé en base64
+        pdf_text = request.json.get('pdf_text')  # Texte extrait du PDF
         
-        # Décoder le PDF base64
-        pdf_data = base64.b64decode(pdf_base64)
-        pdf_file = io.BytesIO(pdf_data)  # Convertir en un fichier exploitable par PyMuPDF
-        pdf_text = extract_text_from_pdf(pdf_file)  # Extraire le texte du PDF
-
-        # Récupérer la réponse du chatbot
+        # Utiliser le texte extrait directement dans la réponse
         response = chatbot_response(message, history=[], pdf_text=pdf_text)
         
         return jsonify({'response': response})
