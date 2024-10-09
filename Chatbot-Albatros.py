@@ -79,33 +79,30 @@ def api_chatbot():
     try:
         # Récupérer le message et le contenu encodé en base64 du PDF
         message = request.json.get('message')
-        pdf_base64 = request.json.get('pdf_content')  # PDF encodé en base64
-        
+        pdf_base64 = request.json.get('pdf_content')
         if not pdf_base64:
             return jsonify({'error': 'Aucun contenu PDF reçu.'}), 400
 
+        print(f"Message reçu: {message}")
+        print(f"PDF encodé en base64: {pdf_base64[:100]}...")  # Afficher seulement les 100 premiers caractères
+        
         # Décoder le contenu base64 en fichier PDF
-        try:
-            pdf_data = base64.b64decode(pdf_base64)
-            pdf_file = io.BytesIO(pdf_data)
-        except Exception as decode_error:
-            return jsonify({'error': 'Erreur lors du décodage Base64 du PDF.'}), 500
+        pdf_data = base64.b64decode(pdf_base64)
+        pdf_file = io.BytesIO(pdf_data)
 
         # Extraire le texte du PDF
         pdf_reader = PdfReader(pdf_file)
         pdf_text = ""
         for page in pdf_reader.pages:
             pdf_text += page.extract_text()
-        
+
         if not pdf_text:
             return jsonify({'error': 'Impossible d\'extraire le texte du PDF.'}), 500
-
-        print(f"Texte extrait du PDF: {pdf_text}")
 
         # Utiliser le texte extrait du PDF dans la réponse du chatbot
         response = chatbot_response(message, history=[], pdf_text=pdf_text)
         return jsonify({'response': response})
-    
+
     except Exception as e:
         print(f"Erreur dans le traitement: {str(e)}")
         return jsonify({'error': str(e)}), 500
