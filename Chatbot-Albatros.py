@@ -83,10 +83,13 @@ def api_chatbot():
         
         if not pdf_base64:
             return jsonify({'error': 'Aucun contenu PDF reçu.'}), 400
-        
+
         # Décoder le contenu base64 en fichier PDF
-        pdf_data = base64.b64decode(pdf_base64)
-        pdf_file = io.BytesIO(pdf_data)
+        try:
+            pdf_data = base64.b64decode(pdf_base64)
+            pdf_file = io.BytesIO(pdf_data)
+        except Exception as decode_error:
+            return jsonify({'error': 'Erreur lors du décodage Base64 du PDF.'}), 500
 
         # Extraire le texte du PDF
         pdf_reader = PdfReader(pdf_file)
@@ -97,11 +100,14 @@ def api_chatbot():
         if not pdf_text:
             return jsonify({'error': 'Impossible d\'extraire le texte du PDF.'}), 500
 
+        print(f"Texte extrait du PDF: {pdf_text}")
+
         # Utiliser le texte extrait du PDF dans la réponse du chatbot
         response = chatbot_response(message, history=[], pdf_text=pdf_text)
-        
         return jsonify({'response': response})
+    
     except Exception as e:
+        print(f"Erreur dans le traitement: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 # Créer l'interface Gradio pour une utilisation normale
