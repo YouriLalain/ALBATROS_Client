@@ -7,6 +7,9 @@ import base64
 from flask import Flask, request, jsonify
 import io
 import os
+import base64
+import io
+from PyPDF2 import PdfReader
 
 # Configuration du logger
 logging.basicConfig(level=logging.ERROR)
@@ -74,11 +77,27 @@ def chatbot_response(message, history, pdf_text=None, image_path=None):
 @app.route('/api/chatbot', methods=['POST'])
 def api_chatbot():
     try:
-        # Récupérer le message et le texte du PDF
+        # Récupérer le message et le contenu encodé en base64 du PDF
         message = request.json.get('message')
-        pdf_text = request.json.get('pdf_text')  # Texte extrait du PDF
+        pdf_base64 = request.json.get('pdf_content')  # PDF encodé en base64
         
-        # Utiliser le texte extrait directement dans la réponse
+        if not pdf_base64:
+            return jsonify({'error': 'Aucun contenu PDF reçu.'}), 400
+        
+        # Décoder le contenu base64 en fichier PDF
+        pdf_data = base64.b64decode(pdf_base64)
+        pdf_file = io.BytesIO(pdf_data)
+
+        # Extraire le texte du PDF
+        pdf_reader = PdfReader(pdf_file)
+        pdf_text = ""
+        for page in pdf_reader.pages:
+            pdf_text += page.extract_text()
+        
+        if not pdf_text:
+            return jsonify({'error': 'Impossible d\'extraire le texte du PDF.'}), 500
+
+        # Utiliser le texte extrait du PDF dans la réponse du chatbot
         response = chatbot_response(message, history=[], pdf_text=pdf_text)
         
         return jsonify({'response': response})
