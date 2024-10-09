@@ -72,7 +72,6 @@ def chatbot_response(message, history, pdf_text=None, image_path=None):
 
 
 @app.route('/api/chatbot', methods=['POST'])
-@app.route('/api/chatbot', methods=['POST'])
 def api_chatbot():
     try:
         # Récupérer le message et le texte du PDF
