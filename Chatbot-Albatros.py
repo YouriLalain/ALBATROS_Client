@@ -75,36 +75,33 @@ def chatbot_response(message, history, pdf_text=None, image_path=None):
 
 
 @app.route('/api/chatbot', methods=['POST'])
+@app.route('/api/chatbot', methods=['POST'])
 def api_chatbot():
     try:
-        # Récupérer le message et le contenu encodé en base64 du PDF
-        message = request.json.get('message')
-        pdf_base64 = request.json.get('pdf_content')
-        if not pdf_base64:
-            return jsonify({'error': 'Aucun contenu PDF reçu.'}), 400
+        # Récupérer le message utilisateur
+        message = request.form.get('message')
 
-        print(f"Message reçu: {message}")
-        print(f"PDF encodé en base64: {pdf_base64[:100]}...")  # Afficher seulement les 100 premiers caractères
-        
-        # Décoder le contenu base64 en fichier PDF
-        pdf_data = base64.b64decode(pdf_base64)
-        pdf_file = io.BytesIO(pdf_data)
+        # Récupérer le fichier PDF uploadé
+        pdf_file = request.files.get('pdf')
 
-        # Extraire le texte du PDF
-        pdf_reader = PdfReader(pdf_file)
+        if not pdf_file:
+            return jsonify({'error': 'Aucun fichier PDF reçu.'}), 400
+
+        # Lire le contenu du PDF avec PyMuPDF (fitz)
+        pdf_data = pdf_file.read()
+        pdf_doc = fitz.open(stream=pdf_data, filetype="pdf")
         pdf_text = ""
-        for page in pdf_reader.pages:
-            pdf_text += page.extract_text()
+        for page in pdf_doc:
+            pdf_text += page.get_text()
 
         if not pdf_text:
             return jsonify({'error': 'Impossible d\'extraire le texte du PDF.'}), 500
 
-        # Utiliser le texte extrait du PDF dans la réponse du chatbot
+        # Utiliser le texte extrait pour interagir avec ton chatbot
         response = chatbot_response(message, history=[], pdf_text=pdf_text)
         return jsonify({'response': response})
 
     except Exception as e:
-        print(f"Erreur dans le traitement: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 # Créer l'interface Gradio pour une utilisation normale
