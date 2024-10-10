@@ -63,7 +63,7 @@ def chatbot_response(message, pdf_text=None):
 def api_chatbot():
     try:
         # Message prédéfini pour le chatbot
-        message = "analyse le CV et donne-moi les 5 compétences principales, séparées par des points-virgules (;), sans introduction, directement les 5 compétences précises en fonction du cv"
+        message = "analyse le CV et donne-moi les 5 compétences principales, séparées par des points-virgules (;), sans introduction du type voici les 5 compétence..., directement les 5 compétences précises en fonction du cv"
         
         # Récupérer le fichier PDF uploadé
         pdf_file = request.files.get('pdf')
