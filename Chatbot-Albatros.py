@@ -84,9 +84,19 @@ def api_chatbot():
         # Utiliser le texte extrait pour interagir avec le chatbot
         response = chatbot_response(message, pdf_text=pdf_text)
         
-        # Envoyer la réponse à Make pour Google Docs
-        make_payload = {"response": response}
-        requests.post(MAKE_WEBHOOK_URL, json=make_payload)
+        # Envoyer uniquement la réponse à Make pour Google Docs
+        make_payload = {
+            "response": response,
+        }
+
+        # URL du Webhook Make
+        MAKE_WEBHOOK_URL = "https://hook.eu2.make.com/yqq8mqiruhwz5j96gqyanpscm3stbydt"
+
+        # Envoyer la requête POST à Make
+        make_response = requests.post(MAKE_WEBHOOK_URL, json=make_payload)
+
+        if make_response.status_code != 200:
+            return jsonify({'error': f"Échec de l'envoi à Make: {make_response.text}"}), 500
 
         return jsonify({'message': 'Réponse envoyée à Make et analysée par le chatbot', 'response': response})
 
