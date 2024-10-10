@@ -149,5 +149,5 @@ demo.launch(server_name="0.0.0.0", server_port=int(os.environ.get("PORT", 5000))
 # Lancer l'application Flask pour la gestion des API
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))  # Utilise le port fourni par Heroku
-    app.run(host="0.0.0.0", port=port)        # Assure-toi que Flask/Gradio écoute sur 0.0.0.0
+    port = int(os.environ.get("PORT", 5000))  # Utiliser le port assigné par Render
+    app.run(host="0.0.0.0", port=port)      # Assure-toi que Flask/Gradio écoute sur 0.0.0.0

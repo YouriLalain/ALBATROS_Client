@@ -1,1 +1,1 @@
-web: python Chatbot-Albatros.py
+web: gunicorn Chatbot-Albatros:app
