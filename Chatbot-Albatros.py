@@ -63,7 +63,7 @@ def chatbot_response(message, pdf_text=None):
 def api_chatbot():
     try:
         # Message prédéfini pour le chatbot
-        message = "analyse le cv et donne moi les 5 compétences principales"
+        message = "analyse le CV et donne-moi les 5 compétences principales, séparées par des points-virgules (;)"
         
         # Récupérer le fichier PDF uploadé
         pdf_file = request.files.get('pdf')
@@ -81,24 +81,34 @@ def api_chatbot():
         if not pdf_text:
             return jsonify({'error': 'Impossible d\'extraire le texte du PDF.'}), 500
 
-        # Utiliser le texte extrait pour interagir avec le chatbot
-        response = chatbot_response(message, pdf_text=pdf_text)
+        # Utiliser le texte extrait pour interagir avec le chatbot et récupérer la réponse
+        chatbot_reply = chatbot_response(message, pdf_text=pdf_text)
+
+        # Diviser la réponse en compétences séparées par des points-virgules
+        competences = [comp.strip() for comp in chatbot_reply.split(';') if comp.strip()]
         
-        # Envoyer uniquement la réponse à Make pour Google Docs
+        # Limiter à 5 compétences
+        competences = competences[:5]
+
+        # Préparer les compétences pour le webhook de Make (pour Webflow CMS)
         make_payload = {
-            "response": response,
+            "competence_1": competences[0] if len(competences) > 0 else "",
+            "competence_2": competences[1] if len(competences) > 1 else "",
+            "competence_3": competences[2] if len(competences) > 2 else "",
+            "competence_4": competences[3] if len(competences) > 3 else "",
+            "competence_5": competences[4] if len(competences) > 4 else ""
         }
 
         # URL du Webhook Make
         MAKE_WEBHOOK_URL = "https://hook.eu2.make.com/yqq8mqiruhwz5j96gqyanpscm3stbydt"
 
-        # Envoyer la requête POST à Make
+        # Envoyer les compétences à Make
         make_response = requests.post(MAKE_WEBHOOK_URL, json=make_payload)
 
         if make_response.status_code != 200:
             return jsonify({'error': f"Échec de l'envoi à Make: {make_response.text}"}), 500
 
-        return jsonify({'message': 'Réponse envoyée à Make et analysée par le chatbot', 'response': response})
+        return jsonify({'message': 'Compétences extraites et envoyées à Make pour Webflow', 'competences': competences})
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
