@@ -29,7 +29,7 @@ def extract_text_from_pdf(pdf_file):
     return text
 
 def chatbot_response(message, pdf_text=None):
-    messages = [{"role": "system", "content": "Vous êtes un assistant IA qui analyse des CV."}]
+    messages = [{"role": "system", "content": "Vous êtes un assistant IA RH qui analyse des CV de manière complete en analysant les compétences."}]
     
     if pdf_text:
         messages.append({"role": "system", "content": f"Le contenu du PDF est : {pdf_text}"})
@@ -63,7 +63,7 @@ def chatbot_response(message, pdf_text=None):
 def api_chatbot():
     try:
         # Message prédéfini pour le chatbot
-        message = "analyse le CV et donne-moi les 5 compétences principales, séparées par des points-virgules (;), sans introduction du type voici les 5 compétence..., directement les 5 compétences précises en fonction du cv"
+        message = "analyse le CV et donne-moi les 3 compétences principales, séparées par des points-virgules (;), sans introduction du type voici les 5 compétence..., directement les 5 compétences précises en fonction du cv"
         
         # Récupérer le fichier PDF uploadé
         pdf_file = request.files.get('pdf')
