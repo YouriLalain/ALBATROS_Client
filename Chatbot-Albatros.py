@@ -88,15 +88,13 @@ def api_chatbot():
         competences = [comp.strip() for comp in chatbot_reply.split(';') if comp.strip()]
         
         # Limiter à 5 compétences
-        competences = competences[:5]
+        competences = competences[:3]
 
         # Préparer les compétences pour le webhook de Make (pour Webflow CMS)
         make_payload = {
             "competence_1": competences[0] if len(competences) > 0 else "",
             "competence_2": competences[1] if len(competences) > 1 else "",
-            "competence_3": competences[2] if len(competences) > 2 else "",
-            "competence_4": competences[3] if len(competences) > 3 else "",
-            "competence_5": competences[4] if len(competences) > 4 else ""
+            "competence_3": competences[2] if len(competences) > 2 else ""
         }
 
         # URL du Webhook Make
