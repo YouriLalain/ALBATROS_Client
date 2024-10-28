@@ -62,12 +62,11 @@ def chatbot_response(message, pdf_text=None):
 @app.route('/api/chatbot', methods=['POST'])
 def api_chatbot():
     try:
-        # Message prédéfini pour le chatbot
-        message = "analyse le CV et donne-moi les 3 compétences principales, séparées par des points-virgules (;), sans introduction du type voici les 5 compétence..., directement les 5 compétences précises en fonction du cv"
+        # Message prédéfini pour le chatbot avec les instructions de formatage du mail et des compétences
+        message = "analyse le CV et donne-moi les 3 compétences principales, séparées par des points-virgules (;), sans introduction du type voici les 3 compétences..., directement les 3 compétences précises en fonction du CV et avec au début le mail du CV. Donc avec comme format : mail@mail.com;competence1;competence2;competence3"
         
         # Récupérer le fichier PDF uploadé
         pdf_file = request.files.get('pdf')
-
         if not pdf_file:
             return jsonify({'error': 'Aucun fichier PDF reçu.'}), 400
 
@@ -83,33 +82,35 @@ def api_chatbot():
 
         # Utiliser le texte extrait pour interagir avec le chatbot et récupérer la réponse
         chatbot_reply = chatbot_response(message, pdf_text=pdf_text)
+        print("Chatbot reply:", chatbot_reply)  # Log pour vérifier la réponse du chatbot
 
-        # Diviser la réponse en compétences séparées par des points-virgules
-        competences = [comp.strip() for comp in chatbot_reply.split(';') if comp.strip()]
-        
-        # Limiter à 5 compétences
-        competences = competences[:3]
+        # Diviser la réponse en éléments séparés par des points-virgules
+        elements = [elem.strip() for elem in chatbot_reply.split(';') if elem.strip()]
+        print("Elements:", elements)  # Log pour vérifier les éléments extraits
 
-        # Préparer les compétences pour le webhook de Make (pour Webflow CMS)
+        # Extraire le mail et les compétences
+        mail = elements[0] if len(elements) > 0 else ""
+        competences = elements[1:4]  # Les 3 compétences suivantes
+        print("Mail:", mail)
+        print("Competences:", competences)
+
+        # Préparer les compétences pour le webhook de Make
         make_payload = {
+            "mail": mail,
             "competence_1": competences[0] if len(competences) > 0 else "",
             "competence_2": competences[1] if len(competences) > 1 else "",
             "competence_3": competences[2] if len(competences) > 2 else ""
         }
 
-        # URL du Webhook Make
-        MAKE_WEBHOOK_URL = "https://hook.eu2.make.com/yqq8mqiruhwz5j96gqyanpscm3stbydt"
-
-        # Envoyer les compétences à Make
+        # Envoyer les données à Make
         make_response = requests.post(MAKE_WEBHOOK_URL, json=make_payload)
-
         if make_response.status_code != 200:
-            return jsonify({'error': f"Échec de l'envoi à Make: {make_response.text}"}), 500
+            return jsonify({'error': f"Échec de l'envoi à Make: {make_response.status_code} - {make_response.text}"}), 500
 
-        return jsonify({'message': 'Compétences extraites et envoyées à Make pour Webflow', 'competences': competences})
+        return jsonify({'message': 'Compétences extraites et envoyées à Make pour Webflow', 'mail': mail, 'competences': competences})
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))  # Assure-toi que Flask/Gradio écoute sur 0.0.0.0
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
