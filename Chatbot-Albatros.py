@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__)
 
 # Remplacez par votre clé API
-OPENROUTER_API_KEY = "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"
+OPENROUTER_API_KEY = "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"
 YOUR_SITE_URL = "votre-site.com"
 YOUR_APP_NAME = "MonChatbot"
 MAKE_WEBHOOK_URL = "https://hook.eu2.make.com/yqq8mqiruhwz5j96gqyanpscm3stbydt"  # Webhook Make pour Google Docs
