@@ -46,7 +46,7 @@ def chatbot_response(message, pdf_text=None):
                 "Content-Type": "application/json"
             },
             data=json.dumps({
-                "model": "meta-llama/llama-3.2-11b-vision-instruct:free",
+                "model": "meta-llama/llama-3.2-90b-vision-instruct:free",
                 "messages": messages
             })
         )
