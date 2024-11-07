@@ -63,7 +63,18 @@ def chatbot_response(message, pdf_text=None):
 def api_chatbot():
     try:
         # Message prédéfini pour le chatbot avec les instructions de formatage du mail et des compétences
-        message = "analyse le CV et donne-moi les 3 compétences principales du cv parmis les compétences suivantes (utilise exactment les mêmes noms) : [Gestion de projet ; Analyse de données ; Programmation en Python ; Conception de circuits électroniques ; Modélisation 3D (CATIA, SolidWorks) ; Connaissance en C/C++ ; Gestion des systèmes embarqués ; Automatisation des processus ; Conception mécanique ; Simulation (MATLAB, Simulink) ; Analyse de la fiabilité (FMEA) ; Communication technique ; Résolution de problèmes complexes ; Connaissances en Intelligence Artificielle ; Systèmes de contrôle ; Programmation en Java ; Développement logiciel (Scrum, Agile) ; Design des expériences utilisateur (UX/UI) ; Conception et analyse des matériaux ; Gestion de la chaîne d’approvisionnement ; Conception de bases de données (SQL, NoSQL) ; Automatisation industrielle (PLC, SCADA) ; Connaissance en sécurité informatique ; Méthodes d’optimisation ; Analyse des vibrations et acoustique ; Réseaux et télécommunications ; Programmation web (HTML, CSS, JavaScript) ; Systèmes de vision par ordinateur ; Analyse de systèmes thermiques ; Travail en équipe et collaboration interdisciplinaire], séparées par des points-virgules (;), sans introduction du type voici les 3 compétences...,sans aucun commentaires,et en ne choisissant les compétences que parmis celle du tableau de compétences donné en utilisant strictement le même nom , directement les 3 compétences précises en fonction du CV et avec au début le mail du CV. Donc avec comme format : mail@mail.com;competence1;competence2;competence3"
+        message = """Je suis un chatbot spécialisé en analyse de CV. Votre tâche est d’analyser le CV fourni et d'identifier les 3 compétences principales qui s’y trouvent. Voici la liste de compétences que vous devez utiliser strictement pour votre analyse (vous devez reprendre exactement la même orthographe et formulation) :
+
+[Gestion de projet ; Analyse de données ; Programmation en Python ; Conception de circuits électroniques ; Modélisation 3D (CATIA, SolidWorks) ; Connaissance en C/C++ ; Gestion des systèmes embarqués ; Automatisation des processus ; Conception mécanique ; Simulation (MATLAB, Simulink) ; Analyse de la fiabilité (FMEA) ; Communication technique ; Résolution de problèmes complexes ; Connaissances en Intelligence Artificielle ; Systèmes de contrôle ; Programmation en Java ; Développement logiciel (Scrum, Agile) ; Design des expériences utilisateur (UX/UI) ; Conception et analyse des matériaux ; Gestion de la chaîne d’approvisionnement ; Conception de bases de données (SQL, NoSQL) ; Automatisation industrielle (PLC, SCADA) ; Connaissance en sécurité informatique ; Méthodes d’optimisation ; Analyse des vibrations et acoustique ; Réseaux et télécommunications ; Programmation web (HTML, CSS, JavaScript) ; Systèmes de vision par ordinateur ; Analyse de systèmes thermiques ; Travail en équipe et collaboration interdisciplinaire].
+
+Contraintes importantes :
+1. Vous devez obligatoirement choisir les 3 compétences parmi la liste fournie.
+2. Vous devez utiliser exactement le même nom de compétence de la liste, sans modification.
+3. Formatez la réponse comme suit : email@example.com;compétence1;compétence2;compétence3.
+4. Ne pas ajouter de commentaire, de contexte ou de texte explicatif. Répondez uniquement dans le format demandé.
+
+Exemple de réponse correcte :
+mail@mail.com;Programmation en Python;Analyse de données;Communication technique"""
         
         # Récupérer le fichier PDF uploadé
         pdf_file = request.files.get('pdf')
