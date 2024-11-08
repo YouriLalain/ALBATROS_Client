@@ -19,7 +19,7 @@ app = Flask(__name__)
 OPENROUTER_API_KEY = "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"
 YOUR_SITE_URL = "votre-site.com"
 YOUR_APP_NAME = "MonChatbot"
-MAKE_WEBHOOK_URL = "https://hook.eu2.make.com/yqq8mqiruhwz5j96gqyanpscm3stbydt"  # Webhook Make pour Google Docs
+MAKE_WEBHOOK_URL = "https://hook.eu2.make.com/e6lrokgrns5xmqune2ew69jbyrvnhl5a"   #"https://hook.eu2.make.com/yqq8mqiruhwz5j96gqyanpscm3stbydt"  # Webhook Make pour Google Docs
 
 def extract_text_from_pdf(pdf_file):
     doc = fitz.open(pdf_file)
